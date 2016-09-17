@@ -20,32 +20,16 @@ let playerTemplate = {
 	timer: {}
 };
 
-
-
 // START GAME
 
-//round 0, initialization
-let player1 = _.cloneDeep(playerTemplate);
-players.push(player1);
-player1.name = "Korath";
-player1.rightHand = rightHand;
-player1.leftHand = leftHand;
+// ROUND 0
+init();
 
-//round 1
-round++;
-takeTurn(player1, "F", ">");
-let spellList = getSpells(player1);
-console.log(spellList);
+// ROUND 1
+fakeRoundOne();
 
-
-//let first_rh_spell = right_hand_spells[0].action(player1);
-//console.log(right_hand_spells[0].name);
-//console.log(first_rh_spell);
-//console.log(player1);
-
-
-//run timer functions at end of round. forEach through instead of first index
-runTimer(player1, round);
+// ROUND 2
+fakeRoundTwo();
 
 // END GAME
 
@@ -60,15 +44,16 @@ function runTimer(player, round) {
 	}
 }
 
-function takeTurn(player, right, left) {
+function takeTurn(player, right, left) {	
 	player.rightHand.push(right);
 	player.leftHand.push(left);
+	console.log("take turn: ", player);
 }
 
 function getSpells(player) {
 	let spells = [];
-	let right_hand_spells = check(player1.rightHand);
-	let left_hand_spells = check(player1.leftHand);
+	let right_hand_spells = check(player.rightHand);
+	let left_hand_spells = check(player.leftHand);
 
 	if (right_hand_spells !== undefined) {
 		spells = _.concat(spells, right_hand_spells);
@@ -81,6 +66,64 @@ function getSpells(player) {
 	return spells;
 }
 
+function castSpell(player, target, spellListNumber) {
+	let spellList = getSpells(player);
+
+	spellList[spellListNumber].action(player, target);
+}
+
+// fake user input 
+function init() {
+	player1 = _.cloneDeep(playerTemplate);
+	players.push(player1);
+	player1.name = "Korath";
+	player1.rightHand = [];
+	player1.leftHand = [];
+
+	player2 = _.cloneDeep(playerTemplate);
+	players.push(player2);
+	player2.name = "Molina";
+	player2.rightHand = [];
+	player2.leftHand = [];
+}
+
+function fakeRoundOne() {
+	round++;
+	takeTurn(player1, "F", ">");
+	takeTurn(player2, "W", "W");
+	//console.log(player2);
+	let spellList1 = getSpells(player1);
+	//console.log(spellList1);
+	let spellList2 = getSpells(player2);
+	//console.log(spellList2);
+	if (spellList2.length > 0) {
+		castSpell(player2, player2, 0);
+	}
+	if (spellList1.length > 0) {
+		castSpell(player1, player2, 0);
+	}
+	console.log(player2);
+	//run timer functions at end of round. forEach through instead of first index
+	runTimer(player1, round);
+	runTimer(player2, round);
+}
+
+function fakeRoundTwo() {
+	round++;
+	takeTurn(player1, "F", ">");
+	takeTurn(player2, "W", "P");
+	spellList1 = getSpells(player1);
+	//console.log(spellList1);
+	spellList2 = getSpells(player2);
+	//console.log(spellList2);
+	if (spellList2.length > 0) {
+		castSpell(player2, player2, 0);
+	}
+	if (spellList1.length > 0) {
+		castSpell(player1, player2, 0);
+	}
+	console.log(player2);
+}
 
 
 
