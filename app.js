@@ -17,6 +17,7 @@ let playerTemplate = {
 	enchantment: [],
 	resistance: [],
 	monsters: [],
+	currentSpell: '',
 	timer: {}
 };
 
@@ -47,7 +48,7 @@ function runTimer(player, round) {
 function takeTurn(player, right, left) {	
 	player.rightHand.push(right);
 	player.leftHand.push(left);
-	console.log("take turn: ", player);
+	//console.log("take turn: ", player);
 }
 
 function getSpells(player) {
@@ -102,7 +103,7 @@ function fakeRoundOne() {
 	if (spellList1.length > 0) {
 		castSpell(player1, player2, 0);
 	}
-	console.log(player2);
+	//console.log(player2);
 	//run timer functions at end of round. forEach through instead of first index
 	runTimer(player1, round);
 	runTimer(player2, round);
@@ -115,16 +116,48 @@ function fakeRoundTwo() {
 	spellList1 = getSpells(player1);
 	//console.log(spellList1);
 	spellList2 = getSpells(player2);
-	//console.log(spellList2);
+	//console.log(spellList2);	
+
 	if (spellList2.length > 0) {
 		castSpell(player2, player2, 0);
 	}
+	
 	if (spellList1.length > 0) {
 		castSpell(player1, player2, 0);
 	}
-	console.log(player2);
+
+
+	//console.log(player2);
 }
 
+//returns an array of the correct player order based on spell priority
+function orderPlayers(players) {
+	let playerOrder = [];	
+	let playerSet = [];
+	let priority = ['Dispel magic', 'Counter-spell', 'Counter spell', 'Magic mirror', 'Summon goblin', 'Summon ogre', 'Summon troll', 'Summon giant', 'Summon elemental', 'Raise dead', 'Haste', 'Time stop', 'Protection from evil', 'Resist heat', 'Resist cold', 'Paralysis', 'Amnesia', 'Fear', 'Confusion', 'Charm monster', 'Disease', 'Poison', 'Cure light wounds', 'Cure heavy wounds', 'Anti Spell', 'Blindness', 'Invisibility', 'Permanency', 'Delayed effect', 'Remove Enchantment', 'Shield', 'Missile', 'Cause light wounds', 'Cause heavy wounds', 'Lightning bolt', 'Fireball', 'Finger of death', 'Fire storm', 'Ice Storm', 'Stab'];
+	let result = [];
+
+	_.forEach(players, function (value, key) {
+		playerSet = [];
+
+		if (value.currentSpell !== '') {
+			playerSet.push(value.name, value.currentSpell);
+			playerOrder.push(playerSet);		
+		}		
+	});
+
+	for (let i = 0; i < priority.length; i += 1) {
+		_.forEach(players, function(value, key) {
+			if (value.currentSpell === priority[i]) {
+				result.push(value.name);
+			}
+		})
+	}
+
+	return result;
+}
+
+console.log(orderPlayers(players));
 
 
 
